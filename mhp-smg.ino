@@ -12,7 +12,6 @@ const byte sfSwitchB = 4;
 Trigger pushTrigger(pushTriggerPin);
 Solenoid pusher(pusherControlPin);
 Flywheel flywheels(motorControlPin);
-SelectfireSwitch selectfireSwitch(sfSwitchA, sfSwitchB);
 
 void setup() {
   Serial.begin(9600);
@@ -27,21 +26,19 @@ void setup() {
 
 void loop() {
   pushTrigger.loop();
-//  if(pushTrigger.isTriggered()){
-//    flywheels.fire();
-//    
-//    if(flywheels.isReady()){
-//      pusher.activate();
-//    }
-//    
-//  } else {
-//    flywheels.stop();
-//    pusher.deactivate();
-//  }
+  if(pushTrigger.isTriggered()){
+    flywheels.fire();
+
+    if(flywheels.isReady()){
+      pusher.activate();
+    }
+
+  } else {
+    flywheels.stop();
+    pusher.deactivate();
+  }
   pusher.loop();
   flywheels.loop();
-  selectfireSwitch.loop();
-  Serial.println(selectfireSwitch.state());
 //  Serial.print(pusher.state());
 //  Serial.print(", ");
 //  Serial.println(digitalRead(motorControlPin));
