@@ -7,7 +7,7 @@ Flywheel::Flywheel(byte attachTo){
 }
 
 bool Flywheel::isReady(){
-  return (millis() -_spinStartTime > 500);
+  return _state && (millis() -_spinStartTime > 500);
 }
 
 void Flywheel::fire(){
