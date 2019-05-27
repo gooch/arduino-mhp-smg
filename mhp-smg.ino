@@ -1,6 +1,7 @@
 const int revTriggerPin = 6;
 const int pushTriggerPin = 9;
-const int motorControlPin = 8;
+const int motorControlPinA = 7;
+const int motorControlPinB = 8;
 const int pusherControlPin = 5;
 //const byte sfSwitchA = 3;
 //const byte sfSwitchB = 4;
@@ -13,18 +14,21 @@ const int pusherControlPin = 5;
 Trigger revTrigger(revTriggerPin);
 Trigger pushTrigger(pushTriggerPin);
 Solenoid pusher(pusherControlPin);
-Flywheel flywheels(motorControlPin);
+FlyWheel flywheelA(motorControlPinA, 2000);
+FlyWheel flywheelB(motorControlPinB, 2000);
 
 void setup() {
   Serial.begin(9600);
   revTrigger.setup();
   pushTrigger.setup();
   pusher.setup();
-  flywheels.setup();
+  flywheelA.setup();
+  flywheelB.setup();
   pusher.setMode(MODE_FULL_AUTO);
   pusher.setOnTime(50);
   pusher.setOffTime(100);
 ///  selectfireSwitch.setup();
+  delay(6000);
 }
 
 void loop() {
@@ -32,21 +36,27 @@ void loop() {
   pushTrigger.loop();
 
   if(revTrigger.isTriggered()){
-    flywheels.fire();
+    flywheelA.fire();
+    flywheelB.fire();
   } else {
-    flywheels.stop();
+    pusher.deactivate();
   }
   
   if(pushTrigger.isTriggered()){
-    if(flywheels.isReady()){
+    if(flywheelA.isReady() && flywheelB.isReady()){
       pusher.activate();
     }
   } else {
     pusher.deactivate();
   }
   pusher.loop();
-  flywheels.loop();
-  Serial.print(pusher.state());
+  flywheelA.loop();
+  flywheelB.loop();
+  Serial.print(flywheelA.getSpeed());
   Serial.print(", ");
-  Serial.println(digitalRead(motorControlPin));
+  if(pusher.state()){
+    Serial.println(2000);
+  } else {
+    Serial.println(1000);
+  }
 }
